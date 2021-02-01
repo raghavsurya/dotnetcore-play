@@ -81,5 +81,25 @@ namespace Ecommerce.Api.Products.Providers
                 return (false, null, ex.Message);
             }
         }
+
+        public async Task<(bool IsSuccess, ProductModel product, string ErrorMessage)> GetProductAsync(int id)
+        {
+            try
+            {
+                var products = await dbContext.Products.ToListAsync();
+                var product = products.FirstOrDefault(product => product.Id == id);
+                if (product != null)
+                {
+                    var result = mapper.Map<Product, ProductModel>(product);
+                    return (true, result, null);
+                }
+                return (false, null, "Not found");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("error occurred", ex.Message);
+                return (false, null, ex.Message);
+            }
+        }
     }
 }
